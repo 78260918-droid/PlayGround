@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05060a">
+  <title>El Gato del Sombrero</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23120b18'/%3E%3Cpath d='M14 24 L18 8 L28 18 L36 18 L46 8 L50 24 L48 44 Q32 56 16 44 Z' fill='%230d0a13' stroke='%235a2f78' stroke-width='2'/%3E%3Cellipse cx='25' cy='30' rx='5' ry='7' fill='%23ffe36a'/%3E%3Cellipse cx='39' cy='30' rx='5' ry='7' fill='%23ffe36a'/%3E%3Crect x='20' y='10' width='24' height='14' fill='%233b1a5c'/%3E%3Crect x='20' y='18' width='24' height='4' fill='%23a11f38'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="title-mode">
+  <div id="stage">
+    <canvas id="game" aria-label="El Gato del Sombrero"></canvas>
+
+    <div id="vignette"></div>
+    <div id="grain"></div>
+    <div id="redFlash"></div>
+
+    <div id="hud" class="hidden">
+      <div id="missionPanel">
+        <h2 id="panelTitle">MISIONES DEL GATO</h2>
+        <ul id="missionList"></ul>
+        <div id="objectiveWrap">
+          <span id="objectiveArrow">▸</span>
+          <span id="objectiveText"></span>
+        </div>
+      </div>
+      <div id="topBar">
+        <button id="muteBtn" type="button" aria-label="Silenciar sonido">SONIDO ON</button>
+      </div>
+    </div>
+
+    <div id="toast" role="status"></div>
+
+    <div id="prompt" class="hidden">
+      <span class="key">E</span>
+      <span id="promptText"></span>
+    </div>
+
+    <div id="dialogue" class="hidden" role="dialog" aria-live="polite">
+      <div id="speaker">EL GATO</div>
+      <div id="dialogueText"></div>
+      <div id="dialogueHint">E / espacio / clic</div>
+    </div>
+
+    <div id="cookHud" class="hidden">
+      <div class="cook-title">Cocinando pastel de atún...</div>
+      <div class="cook-bar"><div id="cookFill"></div></div>
+      <div class="cook-note">No preguntes por el atún.</div>
+    </div>
+
+    <div id="hideHud" class="hidden">
+      <div class="hide-title">NO RESPIRES</div>
+      <div class="hide-sub">El Gato te está buscando...</div>
+      <div class="hide-bar"><div id="hideFill"></div></div>
+    </div>
+
+    <div id="jumpscare" class="hidden" aria-hidden="true">
+      <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff7a8"/>
+            <stop offset="55%" stop-color="#f2d23c"/>
+            <stop offset="100%" stop-color="#b26b05"/>
+          </radialGradient>
+          <radialGradient id="scareBg" cx="50%" cy="45%" r="65%">
+            <stop offset="0%" stop-color="#4a0a18"/>
+            <stop offset="70%" stop-color="#12040d"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </radialGradient>
+        </defs>
+        <rect width="600" height="600" fill="url(#scareBg)"/>
+        <g stroke="#3c2456" stroke-width="9" stroke-linejoin="round">
+          <polygon points="118,244 74,42 252,158" fill="#0c0912"/>
+          <polygon points="482,244 526,42 348,158" fill="#0c0912"/>
+          <ellipse cx="300" cy="330" rx="226" ry="208" fill="#0d0a13"/>
+          <ellipse cx="300" cy="330" rx="180" ry="162" fill="none" stroke="#241434" stroke-width="4"/>
+          <path d="M170 260 Q220 180 285 252" fill="none" stroke="#150d20" stroke-width="16"/>
+          <path d="M430 260 Q380 180 315 252" fill="none" stroke="#150d20" stroke-width="16"/>
+          <ellipse cx="214" cy="314" rx="62" ry="76" fill="url(#eyeGlow)" stroke="#1a0b18" stroke-width="8"/>
+          <ellipse cx="386" cy="314" rx="62" ry="76" fill="url(#eyeGlow)" stroke="#1a0b18" stroke-width="8"/>
+          <ellipse cx="220" cy="326" rx="15" ry="54" fill="#080409" stroke="none"/>
+          <ellipse cx="380" cy="326" rx="15" ry="54" fill="#080409" stroke="none"/>
+          <path d="M300 320 Q278 398 312 430 Q344 400 322 330" fill="#1b0b16" stroke="#050208" stroke-width="5"/>
+          <path d="M160 430 Q300 560 440 430 Q300 500 160 430 Z" fill="#1a0610" stroke="#050208" stroke-width="7"/>
+          <polygon points="192,444 222,500 244,446" fill="#f1e6cf" stroke="none"/>
+          <polygon points="262,458 288,522 308,458" fill="#f1e6cf" stroke="none"/>
+          <polygon points="328,460 352,522 374,456" fill="#f1e6cf" stroke="none"/>
+          <polygon points="392,442 416,494 434,440" fill="#f1e6cf" stroke="none"/>
+          <path d="M222 545 Q300 588 378 545" fill="none" stroke="#5a1024" stroke-width="8"/>
+        </g>
+        <g>
+          <rect x="196" y="10" width="208" height="134" rx="10" fill="#3b1a5c" stroke="#170b26" stroke-width="9"/>
+          <rect x="196" y="92" width="208" height="34" fill="#a11f38" stroke="#170b26" stroke-width="6"/>
+          <rect x="166" y="128" width="268" height="26" rx="10" fill="#2a1242" stroke="#170b26" stroke-width="7"/>
+          <path d="M216 34 Q246 20 276 34" fill="none" stroke="#6e3a9b" stroke-width="5" opacity=".8"/>
+        </g>
+      </svg>
+    </div>
+
+    <div id="title" class="screen">
+      <div class="title-inner">
+        <p class="eyebrow">UNA PESADILLA DOMÉSTICA</p>
+        <h1>EL GATO<br><span>DEL SOMBRERO</span></h1>
+        <p class="tagline">Tres misiones. Un armario. Demasiados ojos.</p>
+        <button id="startBtn" aria-label="Play">JUGAR</button>
+        <p class="controls">WASD / flechas para moverte · E para interactuar · ESC pausa</p>
+        <p class="warning">Contiene sustos repentinos y destellos. Ficción: no quemen casas de verdad.</p>
+      </div>
+    </div>
+
+    <div id="pause" class="screen hidden">
+      <div class="title-inner">
+        <p class="eyebrow">EL JUEGO ESTÁ EN PAUSA</p>
+        <h2>PAUSA</h2>
+        <p class="tagline">El Gato espera. Paciencia de felino.</p>
+        <button id="resumeBtn">SEGUIR</button>
+        <button id="restartBtn" class="ghost">REINICIAR</button>
+      </div>
+    </div>
+
+    <div id="ending" class="screen hidden">
+      <div class="title-inner">
+        <p class="eyebrow">EL GATO DEL SOMBRERO</p>
+        <h2 class="end-title">FIN</h2>
+        <p id="endingText" class="ending-text"></p>
+        <button id="againBtn">JUGAR DE NUEVO</button>
+        <p class="warning">Ficción cartoon. Nadie salió herido... excepto el gato.</p>
+      </div>
+    </div>
+
+    <div id="touchUI" class="hidden" aria-hidden="true">
+      <div id="stick"><div id="knob"></div></div>
+      <button id="actionBtn" type="button" aria-label="Interactuar">E</button>
+    </div>
+  </div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
